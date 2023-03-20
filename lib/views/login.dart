@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:loginwithapi/service/http_service.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:loginwithapi/views/bookingPage.dart';
 import 'package:loginwithapi/views/register.dart';
 
 class LoginPage extends StatefulWidget {
@@ -119,6 +120,26 @@ class _LoginPageState extends State<LoginPage> {
                   );
                 },
                 child: const Text('Create an account'),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('Mau Langsung Pesan Tiket?'),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const Add(),
+                    ),
+                  );
+                },
+                child: const Text('Pesan Tiket'),
               ),
             ],
           ),

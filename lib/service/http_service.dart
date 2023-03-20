@@ -63,4 +63,32 @@ class HttpService {
           "Error Code : ${response.statusCode.toString()}");
     }
   }
+
+  static search(fromAgentValue, toAgentValue, dateofJourney, context) async {
+    http.Response response = await _client.post(_registerUrl, body: {
+      "fromAgentValue": fromAgentValue,
+      "toAgentValue": toAgentValue,
+      "date": dateofJourney,
+    });
+
+    print(fromAgentValue);
+    print(toAgentValue);
+    print(dateofJourney);
+    if (response.statusCode == 200) {
+      var json = jsonDecode(response.body.toString());
+      print(json);
+      if (json == 'username already exist') {
+        print(json);
+        await EasyLoading.showError(json);
+      } else {
+        print(json);
+        // await EasyLoading.showSuccess(json.success);
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => Dashboard()));
+      }
+    } else {
+      await EasyLoading.showError(
+          "Error Code : ${response.statusCode.toString()}");
+    }
+  }
 }
