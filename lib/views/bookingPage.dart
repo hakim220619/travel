@@ -7,15 +7,19 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'package:loginwithapi/service/http_service.dart';
+import 'package:loginwithapi/views/listBooking.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class Add extends StatefulWidget {
   const Add({
     Key? key,
+    this.id,
     this.date,
     this.fromcity,
     this.tocity,
   }) : super(key: key);
 
+  final String? id;
   final String? date;
   final String? fromcity;
   final String? tocity;
@@ -23,12 +27,8 @@ class Add extends StatefulWidget {
   @override
   State<Add> createState() => _AddState();
 }
-
-// for Authentication login and signup
 class _AddState extends State<Add> {
-  // AuthController authController = Get.put(AuthController());
   TextEditingController dateofJourney = TextEditingController();
-//list for gender
 
   List fromAgent = [];
   Future getagentFrom() async {
@@ -36,13 +36,14 @@ class _AddState extends State<Add> {
     http.Response response = await http.get(Uri.parse(baseUrl));
     print(response.statusCode);
     if (response.statusCode == 200) {
+      
+
       var jsonData = json.decode(response.body);
 
       setState(() {
         fromAgent = jsonData['data'];
       });
     }
-    // print(fromAgent);
   }
 
   List toAgent = [];
@@ -52,239 +53,260 @@ class _AddState extends State<Add> {
     // print(response.statusCode);
     if (response.statusCode == 200) {
       var jsonData = json.decode(response.body);
+      
+
 
       setState(() {
         toAgent = jsonData['data'];
       });
     }
-    // print(fromAgent);
+
   }
 
-  // List<String> get ToCity => [
-  //       'Kebumen',
-  //       'Banyumas',
-  //       'Purwokerto',
-  //       'Wonosobo',
-  //       'Bali',
-  //       'Surabaya',
-  //     ];
-
+  String? onclick;
+  bool seepwd = false;
   final _formkey = GlobalKey<FormState>();
 
   @override
+  var fromAgentValue;
+  var toAgentValue;
+  bool changebutton = false;
+  @override
   void initState() {
+    // widget.id != null ? fromAgentValue = widget.fromcity.toString() : "";
+    // widget.id != null ? toAgentValue = widget.fromcity.toString() : "";
+    widget.id != null ? dateofJourney.text = widget.date.toString() : "";
     super.initState();
     getagentFrom();
     getagentTo();
   }
 
-  var fromAgentValue;
-  var toAgentValue;
-  bool changebutton = false;
-  @override
-  Future<bool> _onWillPop() async {
-    return (await showDialog(
-          context: context,
-          builder: (context) => new AlertDialog(
-            title: new Text('Are you sure?'),
-            content: new Text('Do you want to exit an App'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: new Text('No'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: new Text('Yes'),
-              ),
-            ],
-          ),
-        )) ??
-        false;
-  }
-
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Material(
-          color: Colors.white,
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formkey,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Container(
-                      child: Text(
-                        "Travel Booking",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 25,
-                            color: Colors.black),
+    return MaterialApp(
+      home: Scaffold(
+          appBar: AppBar(
+            title: Text("Travel Booking"),
+            centerTitle: true,
+            leading: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Icon(
+                Icons.arrow_back_ios,
+                color: Color.fromARGB(253, 255, 252, 252),
+              ),
+            ),
+          ),
+          body: Container(
+            child: SafeArea(
+              child: Material(
+                  color: Colors.white,
+                  child: SingleChildScrollView(
+                    child: Form(
+                      key: _formkey,
+                      child: Column(
+                        children: [
+                          
+                          SizedBox(
+                            height: 10.0,
+                          ),
+                          //------Textformfiled code-------------
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 16.0, horizontal: 32.0),
+                            child: Container(
+                              child: Column(children: [
+                                Container(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    "Dari :",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: DropdownButtonFormField(
+                                    decoration: InputDecoration(
+                                        fillColor: Colors.grey.shade100,
+                                        filled: true,
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        hintText: 'Titik Penjemputan'),
+                                    isExpanded: true,
+                                    
+                                    items: fromAgent.map((item) {
+                                      return DropdownMenuItem(
+                                        value: item['id'].toString(),
+                                        child: Text(
+                                            item['tempat_agen'].toString()),
+                                      );
+                                    }).toList(),
+                                    validator: (value) {
+                                      if (value == null)
+                                        return 'Silahkan Masukan Tempat';
+                                      return null;
+                                    },
+                                    
+                                    value: fromAgentValue,
+                                    onChanged: (newVal) {
+                                      setState(() {
+                                        fromAgentValue = newVal;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                Container(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    "Tujuan :",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: DropdownButtonFormField(
+                                    decoration: InputDecoration(
+                                        fillColor: Colors.grey.shade100,
+                                        filled: true,
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        hintText: 'Pilih Tujuan'),
+                                    isExpanded: true,
+                                    items: fromAgent.map((item) {
+                                      return DropdownMenuItem(
+                                        value: item['id'].toString(),
+                                        child: Text(
+                                            item['tempat_agen'].toString()),
+                                      );
+                                    }).toList(),
+                                    validator: (value) {
+                                      if (value == false)
+                                        return 'Silahkan Masukan Tempat';
+                                      return null;
+                                    },
+                                    onChanged: (newVal) {
+                                      setState(() {
+                                        toAgentValue = newVal;
+                                      });
+                                    },
+                                    value: toAgentValue,
+                                    
+                                  ),
+                                  
+                                ),
+
+                                Container(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    "Tanggal :",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: TextFormField(
+                                    readOnly: true,
+                                    controller: dateofJourney,
+                                    decoration: InputDecoration(
+                                        fillColor: Colors.grey.shade100,
+                                        filled: true,
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        hintText: 'Pilih Tanggal'),
+                                    validator: (value) {
+                                      if (value == false)
+                                        return 'Silahkan Pilih Tanggal';
+                                      return null;
+                                    },
+                                    onTap: () async {
+                                      DateFormat('dd/mm/yyyy')
+                                          .format(DateTime.now());
+                                      var date = await showDatePicker(
+                                          context: context,
+                                          initialDate: DateTime.now(),
+                                          firstDate: DateTime.now(),
+                                          lastDate: DateTime(2100));
+                                      if (date == null) {
+                                        dateofJourney.text = "";
+                                      } else {
+                                        dateofJourney.text =
+                                            date.toString().substring(0, 10);
+                                      }
+                                
+                                    
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                //-----------Login Button code---------------
+                                InkWell(
+                                  onTap: () async {
+                                    setState(() {
+                                      changebutton = true;
+                                    });
+                                    if (_formkey.currentState!.validate()) {
+                                      // await ListBooking(fromAgentValue, toAgentValue,
+                                      //     dateofJourney.text, context);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (
+                                              context,
+                                            ) =>
+                                                ListBooking(
+                                                    fromAgentValue:
+                                                        fromAgentValue,
+                                                    toAgentValue: toAgentValue,
+                                                    dateofJourney:
+                                                        dateofJourney.text),
+                                          ));
+                                    }
+                                  },
+                                  child: AnimatedContainer(
+                                    duration: Duration(seconds: 1),
+                                    width: changebutton ? 50 : 150,
+                                    height: 50,
+                                    alignment: Alignment.center,
+                                    child: changebutton
+                                        ? Icon(Icons.done)
+                                        : Text(
+                                            widget.fromcity == null
+                                                ? "Cari"
+                                                : "Cari",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18),
+                                                
+                                          ),
+                                          
+                                          
+                                    decoration: BoxDecoration(
+                                        color: Colors.blueAccent,
+                                        borderRadius: BorderRadius.circular(
+                                            changebutton ? 50 : 8)),
+                                            
+                                  ),
+                                  
+                                ),
+                              ]),
+                            ),
+                          )
+                        ],
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 10.0,
-                  ),
-                  //------Textformfiled code-------------
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16.0, horizontal: 32.0),
-                    child: Container(
-                      child: Column(children: [
-                        Container(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            "From :",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: DropdownButtonFormField2(
-                            decoration: InputDecoration(
-                              fillColor: Colors.grey.shade100,
-                              filled: true,
-                              //Add isDense true and zero Padding.
-                              //Add Horizontal padding using buttonPadding and Vertical padding by increasing buttonHeight instead of add Padding here so that The whole TextField Button become clickable, and also the dropdown menu open under The whole TextField Button.
-
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              //Add more decoration as you want here
-                              //Add label If you want but add hint outside the decoration to be aligned in the button perfectly.
-                            ),
-                            isExpanded: true,
-                            hint: const Text(
-                              'Titik Penjemputan',
-                              style: TextStyle(fontSize: 14),
-                            ),
-                            items: fromAgent.map((item) {
-                              return DropdownMenuItem(
-                                value: item['tempat_agen'].toString(),
-                                child: Text(item['tempat_agen'].toString()),
-                              );
-                            }).toList(),
-                            value: fromAgentValue,
-                            onChanged: (newVal) {
-                              setState(() {
-                                fromAgentValue = newVal;
-                              });
-                            },
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            "TO :",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: DropdownButtonFormField2(
-                            decoration: InputDecoration(
-                              fillColor: Colors.grey.shade100,
-                              filled: true,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            // isExpanded: true,
-                            hint: const Text(
-                              'Select Your City',
-                              style: TextStyle(fontSize: 14),
-                            ),
-                            items: fromAgent.map((item) {
-                              return DropdownMenuItem(
-                                value: item['tempat_agen'].toString(),
-                                child: Text(item['tempat_agen'].toString()),
-                              );
-                            }).toList(),
-                            onChanged: (newVal) {
-                              setState(() {
-                                toAgentValue = newVal;
-                              });
-                            },
-                            value: toAgentValue,
-                            validator: (value) {
-                              if (value == null) return 'Please select city';
-                            },
-                          ),
-                        ),
-
-                        Container(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            "Date :",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextFormField(
-                            readOnly: true,
-                            controller: dateofJourney,
-                            decoration: InputDecoration(
-                                fillColor: Colors.grey.shade100,
-                                filled: true,
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                hintText: 'Pick your Date'),
-                            validator: (value) {
-                              if (value == false) return 'Please select Date';
-                              return null;
-                            },
-                            onTap: () async {
-                              DateFormat('dd/mm/yyyy').format(DateTime.now());
-                              var date = await showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime.now(),
-                                  lastDate: DateTime(2100));
-                              dateofJourney.text =
-                                  date.toString().substring(0, 10);
-                            },
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        //-----------Login Button code---------------
-                        InkWell(
-                          onTap: () async {
-                            await HttpService.search(fromAgentValue,
-                                toAgentValue, dateofJourney.text, context);
-                          },
-                          child: AnimatedContainer(
-                            duration: Duration(seconds: 1),
-                            width: changebutton ? 50 : 150,
-                            height: 50,
-                            alignment: Alignment.center,
-                            child: changebutton
-                                ? Icon(Icons.done)
-                                : Text(
-                                    "Cari",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18),
-                                  ),
-                            decoration: BoxDecoration(
-                                color: Colors.blueAccent,
-                                borderRadius: BorderRadius.circular(
-                                    changebutton ? 50 : 8)),
-                          ),
-                        ),
-                      ]),
-                    ),
-                  )
-                ],
-              ),
+                  )),
             ),
           )),
     );

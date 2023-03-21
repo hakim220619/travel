@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:loginwithapi/views/dashboard.dart';
+import 'package:loginwithapi/views/listBooking.dart';
 import 'package:loginwithapi/views/welcome.dart';
 
 class HttpService {
@@ -64,16 +65,16 @@ class HttpService {
     }
   }
 
-  static search(fromAgentValue, toAgentValue, dateofJourney, context) async {
+  static pesan(nama, email, noHp, asal, tujuan, tanggal, context) async {
     http.Response response = await _client.post(_registerUrl, body: {
-      "fromAgentValue": fromAgentValue,
-      "toAgentValue": toAgentValue,
-      "date": dateofJourney,
+      "nama": nama,
+      "email": email,
+      "no_hp": noHp,
+      "asal": asal,
+      "tujuan": tujuan,
+      "tanggal": tanggal,
     });
-
-    print(fromAgentValue);
-    print(toAgentValue);
-    print(dateofJourney);
+    print(response);
     if (response.statusCode == 200) {
       var json = jsonDecode(response.body.toString());
       print(json);

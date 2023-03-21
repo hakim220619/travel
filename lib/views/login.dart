@@ -97,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.fromLTRB(40, 15, 40, 15),
             ),
             child: const Text(
-              'Sign in',
+              'Masuk',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
@@ -109,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text('Not registered yet?'),
+              const Text('Belum Punya Akun?'),
               TextButton(
                 onPressed: () {
                   Navigator.push(
@@ -119,13 +119,11 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   );
                 },
-                child: const Text('Create an account'),
+                child: const Text('Registrasi'),
               ),
             ],
           ),
-          const SizedBox(
-            height: 20,
-          ),
+          
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
